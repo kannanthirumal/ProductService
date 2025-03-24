@@ -2,6 +2,7 @@ package dev.kannan.productservice.services;
 
 import dev.kannan.productservice.dtos.CreateProductRequestDto;
 import dev.kannan.productservice.dtos.FakeStoreProductDto;
+import dev.kannan.productservice.exceptions.ProductNotFoundException;
 import dev.kannan.productservice.models.Category;
 import dev.kannan.productservice.models.Product;
 import org.springframework.http.HttpEntity;
@@ -24,11 +25,17 @@ public class FakeStoreProductService implements ProductService{
     }
 
     @Override
-    public Product getProductById(Long productId) {
-       FakeStoreProductDto fakeStoreProductDto = restTemplate.getForObject(
+    public Product getProductById(Long productId) throws ProductNotFoundException {
+       ResponseEntity<FakeStoreProductDto> fakeStoreProductResponse = restTemplate.getForEntity(
                "https://fakestoreapi.com/products/" + productId,
                FakeStoreProductDto.class
        );
+
+       FakeStoreProductDto fakeStoreProductDto = fakeStoreProductResponse.getBody();
+        if (fakeStoreProductDto == null) {
+            throw new ProductNotFoundException("Product with ID " + productId + " does not exist.");
+        }
+
        return fakeStoreProductDto.convertToProduct();
     }
 
@@ -42,21 +49,26 @@ public class FakeStoreProductService implements ProductService{
        fakeStoreProductDto.setCategory(product.getCategory());
        fakeStoreProductDto.setImage(product.getImage());
 
-       FakeStoreProductDto response = restTemplate.postForObject(
+       ResponseEntity<FakeStoreProductDto> fakeStoreProductResponse = restTemplate.postForEntity(
                "https://fakestoreapi.com/products",
                product,
                FakeStoreProductDto.class
        );
 
-       return response.convertToProduct();
+       FakeStoreProductDto fakeStoreProduct = fakeStoreProductResponse.getBody();
+
+       return fakeStoreProduct.convertToProduct();
     }
 
     @Override
     public List<Product> getAllProducts() {
-        FakeStoreProductDto[] fakeStoreProductDtos = restTemplate.getForObject(
+        ResponseEntity<FakeStoreProductDto[]> fakeStoreProductResponse = restTemplate.getForEntity(
                 "https://fakestoreapi.com/products",
                 FakeStoreProductDto[].class
         );
+
+        FakeStoreProductDto[] fakeStoreProductDtos = fakeStoreProductResponse.getBody();
+
 
         List<Product> products = new ArrayList<>();
         for (FakeStoreProductDto fakeStoreProductDto : fakeStoreProductDtos) {
@@ -67,7 +79,7 @@ public class FakeStoreProductService implements ProductService{
     }
 
     @Override
-    public Product updateProduct(Long productId, CreateProductRequestDto product) {
+    public Product updateProduct(Long productId, CreateProductRequestDto product) throws ProductNotFoundException {
 
         FakeStoreProductDto fakeStoreProductDto = new FakeStoreProductDto();
         fakeStoreProductDto.setTitle(product.getTitle());
@@ -83,13 +95,17 @@ public class FakeStoreProductService implements ProductService{
                 FakeStoreProductDto.class
         );
 
+        if (responseEntity.getStatusCode() == HttpStatus.NOT_FOUND) {
+            throw new ProductNotFoundException("Product with ID " + productId + " does not exist.");
+        }
+
         FakeStoreProductDto response = responseEntity.getBody();
 
         return response.convertToProduct();
     }
 
     @Override
-    public String deleteProduct(Long productId) {
+    public String deleteProduct(Long productId) throws Exception {
         ResponseEntity<Void> responseEntity = restTemplate.exchange(
                 "https://fakestoreapi.com/products/" + productId,
                 HttpMethod.DELETE,
@@ -97,12 +113,17 @@ public class FakeStoreProductService implements ProductService{
                 Void.class
         );
 
-        // According to the Fake Store API documentation, a response status of 200 (HttpStatus.OK) indicates that the product has been successfully deleted.
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            return "Product deleted successfully.";
+        if (responseEntity.getStatusCode() == HttpStatus.NOT_FOUND) {
+            throw new ProductNotFoundException("Product with ID " + productId + " does not exist.");
         }
 
-        return "The product could not be deleted. Ensure the product ID is correct and try again later.";
+        if(responseEntity.getStatusCode() != HttpStatus.OK) {
+            throw new Exception();
+        }
+
+        // According to the Fake Store API documentation, a response status of 200 (HttpStatus.OK) indicates that the product has been successfully deleted.
+        return "Product deleted successfully.";
+
     }
 
 }
