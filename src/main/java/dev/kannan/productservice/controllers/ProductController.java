@@ -18,7 +18,7 @@ public class ProductController {
 
     private ProductService productService;
 
-    public ProductController(@Qualifier("selfProductService") ProductService productService) {
+    public ProductController(@Qualifier("fakeStoreProductService") ProductService productService) {
         this.productService = productService;
     }
 
@@ -36,13 +36,26 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody CreateProductRequestDto product) {
-        Product productResponse = productService.createProduct(product);
+        Product productResponse = productService.createProduct(
+                product.getTitle(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getCategory(),
+                product.getImage()
+        );
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Product> replaceProduct(@PathVariable("id") Long productId, @RequestBody CreateProductRequestDto product) throws ProductNotFoundException {
-        Product productResponse = productService.updateProduct(productId, product);
+        Product productResponse = productService.updateProduct(
+                productId,
+                product.getTitle(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getCategory(),
+                product.getImage());
+
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 

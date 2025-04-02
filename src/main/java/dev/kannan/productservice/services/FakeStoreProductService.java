@@ -40,18 +40,18 @@ public class FakeStoreProductService implements ProductService{
     }
 
     @Override
-    public Product createProduct(CreateProductRequestDto product) {
+    public Product createProduct(String title, String description, Double price, String category, String image) {
        FakeStoreProductDto fakeStoreProductDto = new FakeStoreProductDto();
 
-       fakeStoreProductDto.setTitle(product.getTitle());
-       fakeStoreProductDto.setDescription(product.getDescription());
-       fakeStoreProductDto.setPrice(product.getPrice());
-       fakeStoreProductDto.setCategory(product.getCategory());
-       fakeStoreProductDto.setImage(product.getImage());
+       fakeStoreProductDto.setTitle(title);
+       fakeStoreProductDto.setDescription(description);
+       fakeStoreProductDto.setPrice(price);
+       fakeStoreProductDto.setCategory(category);
+       fakeStoreProductDto.setImage(image);
 
        ResponseEntity<FakeStoreProductDto> fakeStoreProductResponse = restTemplate.postForEntity(
                "https://fakestoreapi.com/products",
-               product,
+               fakeStoreProductDto,
                FakeStoreProductDto.class
        );
 
@@ -79,14 +79,14 @@ public class FakeStoreProductService implements ProductService{
     }
 
     @Override
-    public Product updateProduct(Long productId, CreateProductRequestDto product) throws ProductNotFoundException {
+    public Product updateProduct(Long productId, String title, String description, Double price, String categoryName, String image) throws ProductNotFoundException {
 
         FakeStoreProductDto fakeStoreProductDto = new FakeStoreProductDto();
-        fakeStoreProductDto.setTitle(product.getTitle());
-        fakeStoreProductDto.setDescription(product.getDescription());
-        fakeStoreProductDto.setPrice(product.getPrice());
-        fakeStoreProductDto.setCategory(product.getCategory());
-        fakeStoreProductDto.setImage(product.getImage());
+        fakeStoreProductDto.setTitle(title);
+        fakeStoreProductDto.setDescription(description);
+        fakeStoreProductDto.setPrice(price);
+        fakeStoreProductDto.setCategory(categoryName);
+        fakeStoreProductDto.setImage(image);
 
         ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate.exchange(
                 "https://fakestoreapi.com/products/" + productId,

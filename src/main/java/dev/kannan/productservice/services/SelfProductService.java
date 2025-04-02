@@ -21,12 +21,12 @@ public class SelfProductService implements ProductService{
         this.categoryRepository = categoryRepository;
     }
 
-    private Category fetchOrCreateCategory(CreateProductRequestDto product) {
-        Optional<Category> optionalCategory = categoryRepository.findByTitle(product.getCategory());
+    private Category fetchOrCreateCategory(String categoryName) {
+        Optional<Category> optionalCategory = categoryRepository.findByTitle(categoryName);
         Category category;
         if (optionalCategory.isEmpty()) {
             Category newCategory = new Category();
-            newCategory.setTitle(product.getCategory());
+            newCategory.setTitle(categoryName);
             category = categoryRepository.save(newCategory);
         }
         else{
@@ -49,16 +49,16 @@ public class SelfProductService implements ProductService{
     }
 
     @Override
-    public Product createProduct(CreateProductRequestDto product) {
-        Category category = fetchOrCreateCategory(product);
+    public Product createProduct(String title, String description, Double price, String categoryName, String image) {
+        Category category = fetchOrCreateCategory(categoryName);
 
         Product newProduct = new Product();
 
-        newProduct.setTitle(product.getTitle());
-        newProduct.setPrice(product.getPrice());
+        newProduct.setTitle(title);
+        newProduct.setPrice(price);
         newProduct.setCategory(category);
-        newProduct.setImageUrl(product.getImage());
-        newProduct.setDescription(product.getDescription());
+        newProduct.setImageUrl(image);
+        newProduct.setDescription(description);
 
         return productRepository.save(newProduct);
     }
@@ -69,7 +69,7 @@ public class SelfProductService implements ProductService{
     }
 
     @Override
-    public Product updateProduct(Long productId, CreateProductRequestDto product) throws ProductNotFoundException {
+    public Product updateProduct(Long productId, String title, String description, Double price, String categoryName, String image) throws ProductNotFoundException {
        Optional<Product> optionalProduct = productRepository.findById(productId);
        Product updateProduct;
 
@@ -77,14 +77,14 @@ public class SelfProductService implements ProductService{
            throw new ProductNotFoundException("Product with ID " + productId + " does not exist.");
        }
        else{
-           Category category = fetchOrCreateCategory(product);
+           Category category = fetchOrCreateCategory(categoryName);
 
            updateProduct = new Product();
            updateProduct.setId(productId);
-           updateProduct.setTitle(product.getTitle());
-           updateProduct.setPrice(product.getPrice());
-           updateProduct.setDescription(product.getDescription());
-           updateProduct.setImageUrl(product.getImage());
+           updateProduct.setTitle(title);
+           updateProduct.setPrice(price);
+           updateProduct.setDescription(description);
+           updateProduct.setImageUrl(image);
            updateProduct.setCategory(category);
        }
 
