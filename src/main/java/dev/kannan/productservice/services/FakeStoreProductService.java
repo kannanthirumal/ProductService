@@ -73,6 +73,8 @@ public class FakeStoreProductService implements ProductService {
 
     @Override
     public Product updateProduct(int id, String title, String description, double price, String imageUrl, String category) throws ProductNotFoundException {
+        Product product = getSingleProduct(id); //if product not found, then exception will bubble up naturally
+
         FakeStoreProductDto fakeStoreProductDto = new FakeStoreProductDto();
         fakeStoreProductDto.setTitle(title);
         fakeStoreProductDto.setDescription(description);
@@ -87,21 +89,14 @@ public class FakeStoreProductService implements ProductService {
                 FakeStoreProductDto.class
         );
 
-        if(fakeStoreProductResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
-            throw new ProductNotFoundException("Product with ID " + id + " does not exist.");
-        }
-
         fakeStoreProductDto = fakeStoreProductResponse.getBody();
         return fakeStoreProductDto.toProduct();
     }
 
     @Override
     public String deleteProduct(int id) throws ProductNotFoundException {
-        try {
-            Product product = getSingleProduct(id);
-        } catch (ProductNotFoundException e) {
-            throw e;
-        }
+
+        Product product = getSingleProduct(id); //if product not found, then exception will bubble up naturally
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange(
                 "https://fakestoreapi.com/products/" + id,

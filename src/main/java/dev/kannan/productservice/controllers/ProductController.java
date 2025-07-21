@@ -1,6 +1,7 @@
 package dev.kannan.productservice.controllers;
 
 import dev.kannan.productservice.dtos.CreateProductRequestDto;
+import dev.kannan.productservice.dtos.ErrorDto;
 import dev.kannan.productservice.exceptions.ProductNotFoundException;
 import dev.kannan.productservice.models.Product;
 import dev.kannan.productservice.services.ProductService;
@@ -64,4 +65,13 @@ public class ProductController {
         String response = productService.deleteProduct(productId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    /** exception handler at product controller level for ProductNotFoundException */
+//    @ExceptionHandler(ProductNotFoundException.class)
+//    public ResponseEntity<ErrorDto> handleProductNotFoundException(ProductNotFoundException productNotFoundException) {
+//        ErrorDto errorDto = new ErrorDto();
+//        errorDto.setMessage(productNotFoundException.getMessage());
+//
+//        return new ResponseEntity<>(errorDto, HttpStatus.NOT_FOUND);
+//    }
 }
