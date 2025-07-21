@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Category {
-    private int id;
+public class Category extends BaseModel{
     private String title;
 }

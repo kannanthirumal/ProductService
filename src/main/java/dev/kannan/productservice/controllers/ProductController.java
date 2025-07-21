@@ -22,7 +22,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getSingleProduct(@PathVariable("id") int productId) throws ProductNotFoundException {
+    public ResponseEntity<Product> getSingleProduct(@PathVariable("id") long productId) throws ProductNotFoundException {
         Product product = productService.getSingleProduct(productId);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
@@ -47,7 +47,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable("id") int productId, @RequestBody CreateProductRequestDto createProductRequestDto) throws ProductNotFoundException {
+    public ResponseEntity<Product> updateProduct(@PathVariable("id") long productId, @RequestBody CreateProductRequestDto createProductRequestDto) throws ProductNotFoundException {
         Product product = productService.updateProduct(
                 productId,
                 createProductRequestDto.getTitle(),
@@ -61,7 +61,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable("id") int productId) throws ProductNotFoundException {
+    public ResponseEntity<String> deleteProduct(@PathVariable("id") long productId) throws ProductNotFoundException {
         String response = productService.deleteProduct(productId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

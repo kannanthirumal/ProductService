@@ -24,7 +24,7 @@ public class FakeStoreProductService implements ProductService {
     }
 
     @Override
-    public Product getSingleProduct(int id) throws ProductNotFoundException {
+    public Product getSingleProduct(long id) throws ProductNotFoundException {
         /** using getForObject */
          // FakeStoreProductDto fakeStoreProductDto = restTemplate.getForObject("https://fakestoreapi.com/products/" + id, FakeStoreProductDto.class);
          // return fakeStoreProductDto.toProduct();
@@ -72,7 +72,7 @@ public class FakeStoreProductService implements ProductService {
     }
 
     @Override
-    public Product updateProduct(int id, String title, String description, double price, String imageUrl, String category) throws ProductNotFoundException {
+    public Product updateProduct(long id, String title, String description, double price, String imageUrl, String category) throws ProductNotFoundException {
         Product product = getSingleProduct(id); //if product not found, then exception will bubble up naturally
 
         FakeStoreProductDto fakeStoreProductDto = new FakeStoreProductDto();
@@ -94,7 +94,7 @@ public class FakeStoreProductService implements ProductService {
     }
 
     @Override
-    public String deleteProduct(int id) throws ProductNotFoundException {
+    public String deleteProduct(long id) throws ProductNotFoundException {
 
         Product product = getSingleProduct(id); //if product not found, then exception will bubble up naturally
 

@@ -7,7 +7,7 @@ import dev.kannan.productservice.models.Product;
 import java.util.List;
 
 public interface ProductService {
-    Product getSingleProduct(int id) throws ProductNotFoundException;
+    Product getSingleProduct(long id) throws ProductNotFoundException;
     List<Product> getAllProducts();
     Product createProduct(
             String title,
@@ -18,12 +18,12 @@ public interface ProductService {
     );
 
     Product updateProduct(
-            int id,
+            long id,
             String title,
             String description,
             double price,
             String imageUrl,
             String category
     ) throws ProductNotFoundException;
-    String deleteProduct(int id) throws ProductNotFoundException;
+    String deleteProduct(long id) throws ProductNotFoundException;
 }
