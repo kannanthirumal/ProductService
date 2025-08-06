@@ -3,6 +3,7 @@ package dev.kannan.productservice.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class Category extends BaseModel{
 
     //in (mappedBy = "category") 'category' is the field name in Product that owns this relationship
     //'CascadeType.REMOVE' -> When a category is deleted, delete all the products that are associated with this category
+    //@OneToMany(fetch = FetchType.EAGER, mappedBy = "category", cascade = CascadeType.REMOVE)
     @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
     @JsonIgnore
     List<Product> products;
