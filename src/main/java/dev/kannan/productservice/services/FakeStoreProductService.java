@@ -5,6 +5,7 @@ import dev.kannan.productservice.dtos.FakeStoreProductDto;
 import dev.kannan.productservice.exceptions.ProductNotFoundException;
 import dev.kannan.productservice.models.Product;
 import org.springframework.data.domain.Page;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -19,9 +20,11 @@ import java.util.List;
 public class FakeStoreProductService implements ProductService {
 
     private RestTemplate restTemplate;
+    private RedisTemplate redisTemplate;
 
-    public  FakeStoreProductService(RestTemplate restTemplate) {
+    public  FakeStoreProductService(RestTemplate restTemplate, RedisTemplate redisTemplate) {
         this.restTemplate = restTemplate;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -29,6 +32,24 @@ public class FakeStoreProductService implements ProductService {
         /** using getForObject */
          // FakeStoreProductDto fakeStoreProductDto = restTemplate.getForObject("https://fakestoreapi.com/products/" + id, FakeStoreProductDto.class);
          // return fakeStoreProductDto.toProduct();
+
+        /**
+         * first check in redis cache
+         * type casting to product because it returns an object
+         */
+
+        Product product = (Product) redisTemplate.opsForHash().get("PRODUCTS", "product_" + id);
+
+        /**
+         *  cache hit (with cache - just 23 milliseconds)
+         */
+        if (product != null) {
+            return product;
+        }
+
+        /**
+         * cache miss (without cache it takes 3.27 seconds on avg)
+         * /
 
         /** using getForEntity */
         ResponseEntity<FakeStoreProductDto> fakeStoreProductResponse = restTemplate.getForEntity("https://fakestoreapi.com/products/" + id, FakeStoreProductDto.class);
@@ -40,7 +61,9 @@ public class FakeStoreProductService implements ProductService {
             throw new ProductNotFoundException("Product with ID " + id + " does not exist.");
         }
 
-        return fakeStoreProductDto.toProduct();
+        product = fakeStoreProductDto.toProduct();
+        redisTemplate.opsForHash().put("PRODUCTS", "product_" + id, product);
+        return product;
     }
 
     @Override
