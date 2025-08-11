@@ -2,6 +2,8 @@ package dev.kannan.productservice.repositories;
 
 import dev.kannan.productservice.Projections.ProductProjection;
 import dev.kannan.productservice.models.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,6 +27,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
      * find all the products from the products table -> coz this repository belongs to the Product model
      */
     List<Product> findAll();
+
+    /**
+     * With pagination
+     */
+    Page<Product> findAll(Pageable pageable);
+
 
     Optional<Product> findById(long id);
 
@@ -65,3 +73,4 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<ProductProjection> getIdAndTitleOfAllProductsWithCategoryTitleSql(@Param("categoryName") String categoryTitle); //it can be anything and hql will handle this behind the scenes, i used this to make the method descriptive
 
 }
+

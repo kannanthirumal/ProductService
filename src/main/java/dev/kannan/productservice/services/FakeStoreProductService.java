@@ -4,6 +4,7 @@ import dev.kannan.productservice.dtos.CreateProductRequestDto;
 import dev.kannan.productservice.dtos.FakeStoreProductDto;
 import dev.kannan.productservice.exceptions.ProductNotFoundException;
 import dev.kannan.productservice.models.Product;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -54,6 +55,13 @@ public class FakeStoreProductService implements ProductService {
         }
 
         return products;
+    }
+
+    /**
+     * pagination
+     * */
+    public Page<Product> getAllProductsPaginated(int pageNo, int pageSize) {
+        return null;
     }
 
     @Override

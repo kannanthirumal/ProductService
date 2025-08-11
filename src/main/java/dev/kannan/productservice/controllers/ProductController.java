@@ -6,6 +6,7 @@ import dev.kannan.productservice.exceptions.ProductNotFoundException;
 import dev.kannan.productservice.models.Product;
 import dev.kannan.productservice.services.ProductService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,14 @@ public class ProductController {
     @GetMapping()
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
+
+    @GetMapping("/pagination")
+    public ResponseEntity<List<Product>> getAllProductsPaginated(@RequestParam("pageNo") int pageNo, @RequestParam("pageSize") int pageSize) {
+        Page<Product> productPage = productService.getAllProductsPaginated(pageNo, pageSize);
+        List<Product> products = productPage.getContent();
+
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 

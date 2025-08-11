@@ -6,6 +6,9 @@ import dev.kannan.productservice.models.Category;
 import dev.kannan.productservice.models.Product;
 import dev.kannan.productservice.repositories.CategoryRepository;
 import dev.kannan.productservice.repositories.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +36,24 @@ public class SelfProductService implements ProductService{
     @Override
     public List<Product> getAllProducts() {
         return productRepository.findAll();
+    }
+
+    /**
+     * Pagination
+     * Pageable -> is an interface
+     * and we can't create objects out of it
+     * so we are using a child class that implements that interface called "PageRequest"
+     */
+    public Page<Product> getAllProductsPaginated(int pageNo, int pageSize) {
+        return productRepository.findAll(
+                PageRequest.of(
+                        pageNo,
+                        pageSize,
+                        Sort.by("title").descending()
+                                .and(Sort.by("price").ascending())
+                                .and(Sort.by("createdAt").ascending())
+                )
+        );
     }
 
 
